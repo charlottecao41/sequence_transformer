@@ -98,14 +98,14 @@ tf.compat.v1.flags.DEFINE_string(
 
 tf.compat.v1.flags.DEFINE_string("master", None, "[Optional] TensorFlow master URL.")
 
-flags.DEFINE_integer(
+tf.compat.v1.flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
-flags.DEFINE_bool("use_pop_random", True, "use pop random negative samples")
-flags.DEFINE_string("vocab_filename", None, "vocab filename")
-flags.DEFINE_string("user_history_filename", None, "user history filename")
-flags.DEFINE_string("itemid_pool_filename", None, "itemid pool filename")
+tf.compat.v1.flags.DEFINE_bool("use_pop_random", True, "use pop random negative samples")
+tf.compat.v1.flags.DEFINE_string("vocab_filename", None, "vocab filename")
+tf.compat.v1.flags.DEFINE_string("user_history_filename", None, "user history filename")
+tf.compat.v1.flags.DEFINE_string("itemid_pool_filename", None, "itemid pool filename")
 
 
 class EvalHooks(tf.compat.v1.train.SessionRunHook):
@@ -161,8 +161,8 @@ class EvalHooks(tf.compat.v1.train.SessionRunHook):
     def before_run(self, run_context):
         #tf.compat.v1.logging.info('run before run')
         #print('run before_run')
-        variables = tf.get_collection('eval_sp')
-        return tf.train.SessionRunArgs(variables)
+        variables = tf.compat.v1.get_collection('eval_sp')
+        return tf.compat.v1.train.SessionRunArgs(variables)
 
     def after_run(self, run_context, run_values):
         #tf.compat.v1.logging.info('run after run')
@@ -170,8 +170,6 @@ class EvalHooks(tf.compat.v1.train.SessionRunHook):
         masked_lm_log_probs, input_ids, masked_lm_ids, info = run_values.results
         masked_lm_log_probs = masked_lm_log_probs.reshape(
             (-1, FLAGS.max_predictions_per_seq, masked_lm_log_probs.shape[1]))
-#         print("loss value:", masked_lm_log_probs.shape, input_ids.shape,
-#               masked_lm_ids.shape, info.shape)
 
         for idx in range(len(input_ids)):
             rated = set(input_ids[idx])
@@ -277,13 +275,13 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
             if use_tpu:
 
                 def tpu_scaffold():
-                    tf.train.init_from_checkpoint(init_checkpoint,
+                    tf.compat.v1.train.init_from_checkpoint(init_checkpoint,
                                                   assignment_map)
-                    return tf.train.Scaffold()
+                    return tf.compat.v1.train.Scaffold()
 
                 scaffold_fn = tpu_scaffold
             else:
-                tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
+                tf.compat.v1.train.init_from_checkpoint(init_checkpoint, assignment_map)
 
         tf.compat.v1.logging.info("**** Trainable Variables ****")
         for var in tvars:
@@ -317,11 +315,11 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                                                     [-1])
                 masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
                 masked_lm_weights = tf.reshape(masked_lm_weights, [-1])
-                masked_lm_accuracy = tf.metrics.accuracy(
+                masked_lm_accuracy = tf.compat.v1.metrics.accuracy(
                     labels=masked_lm_ids,
                     predictions=masked_lm_predictions,
                     weights=masked_lm_weights)
-                masked_lm_mean_loss = tf.metrics.mean(
+                masked_lm_mean_loss = tf.compat.v1.metrics.mean(
                     values=masked_lm_example_loss, weights=masked_lm_weights)
 
                 return {
@@ -329,10 +327,10 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                     "masked_lm_loss": masked_lm_mean_loss,
                 }
 
-            tf.add_to_collection('eval_sp', masked_lm_log_probs)
-            tf.add_to_collection('eval_sp', input_ids)
-            tf.add_to_collection('eval_sp', masked_lm_ids)
-            tf.add_to_collection('eval_sp', info)
+            tf.compat.v1.add_to_collection('eval_sp', masked_lm_log_probs)
+            tf.compat.v1.add_to_collection('eval_sp', input_ids)
+            tf.compat.v1.add_to_collection('eval_sp', masked_lm_ids)
+            tf.compat.v1.add_to_collection('eval_sp', info)
 
             eval_metrics = metric_fn(masked_lm_example_loss,
                                      masked_lm_log_probs, masked_lm_ids,

@@ -28,11 +28,11 @@ import numpy as np
 #comment  entity2entityId = pickle.load(open('../data/redial/entity2entityId.pkl', 'rb')); entities.append(entity2entityId[entity]); sequence.append(entity2entityId[entity]); # count_e=50000 to # pickle.dump(e2eId, open('../data/redial/entity2entityId.pkl', 'wb')) and then run again
 
 
-redial_path="../data/redial/"
+redial_path="data/redial/"
 line_index = 0
 all_enti = []
-entity2entityId = pickle.load(open('../data/redial/entity2entityId.pkl', 'rb'))
-text_en_dict = pickle.load(open('../data/redial/text_dict.pkl', 'rb'))
+entity2entityId = pickle.load(open('data/redial/entity2entityId.pkl', 'rb'))
+text_en_dict = pickle.load(open('data/redial/text_dict.pkl', 'rb'))
 
 cout=0
 for i in text_en_dict.items():

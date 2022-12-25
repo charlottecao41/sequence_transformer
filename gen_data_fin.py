@@ -175,9 +175,8 @@ def write_instance_to_example_files(instances, max_seq_length,
             masked_lm_positions)
         features["masked_lm_ids"] = create_int_feature(masked_lm_ids)
         features["masked_lm_weights"] = create_float_feature(masked_lm_weights)
-
-        tf_example = tf.train.Example(
-            features=tf.train.Features(feature=features))
+        tf_example = tf.compat.v1.train.Example(
+            features=tf.compat.v1.train.Features(feature=features))
 
         writers[writer_index].write(tf_example.SerializeToString())
         writer_index = (writer_index + 1) % len(writers)
@@ -207,14 +206,14 @@ def write_instance_to_example_files(instances, max_seq_length,
 
 
 def create_int_feature(values):
-    feature = tf.train.Feature(
-        int64_list=tf.train.Int64List(value=list(values)))
+    feature = tf.compat.v1.train.Feature(
+        int64_list=tf.compat.v1.train.Int64List(value=list(values)))
     return feature
 
 
 def create_float_feature(values):
-    feature = tf.train.Feature(
-        float_list=tf.train.FloatList(value=list(values)))
+    feature = tf.compat.v1.train.Feature(
+        float_list=tf.compat.v1.train.FloatList(value=list(values)))
     return feature
 
 
@@ -549,6 +548,8 @@ def main():
         cc += len(user_train[u])
         max_len = max(len(user_train[u]), max_len)
         min_len = min(len(user_train[u]), min_len)
+
+    print("user train: ", user_train)
 
     print('average sequence length: %.2f' % (cc / len(user_train)))
     print('max:{}, min:{}'.format(max_len, min_len))

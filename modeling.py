@@ -304,7 +304,7 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
             name = m.group(1)
         name_to_variable[name] = var
 
-    init_vars = tf.train.list_variables(init_checkpoint)
+    init_vars = tf.compat.v1.train.list_variables(init_checkpoint)
 
     assignment_map = collections.OrderedDict()
     for x in init_vars:
@@ -333,14 +333,6 @@ def dropout(input_tensor, dropout_prob):
     output = tf.nn.dropout(input_tensor, 1.0 - dropout_prob)
     return output
 
-
-# def layer_norm(input_tensor, name=None):
-#     """Run layer normalization on the last dimension of the tensor."""
-#     return tf.contrib.layers.layer_norm(
-#         inputs=input_tensor,
-#         begin_norm_axis=-1,
-#         begin_params_axis=-1,
-#         scope=name)
     
 def layer_norm(input_tensor, name=None):
   """Run layer normalization on the last dimension of the tensor."""
